@@ -1,7 +1,9 @@
 # pip install pysimplegui
 import PySimpleGUI as sg
+import re
 
 EURO = 1.95576
+REGEX = '^[0-9]+([.][0-9]{2})?$'
 
 sg.theme('BluePurple')
 layout = [
@@ -26,11 +28,15 @@ while True:
             value = 'BGN'
         window['-CURRENCY-OUT-'].update(value)
     # print(values['-IN-'].strip() in ('0123456789.'))
-    if event == 'Convert' and values['-IN-'].isdecimal():
-        if values['-CURRENCY-IN-'] == 'BGN':
-            value = float(values['-IN-'])/EURO
+    # if event == 'Convert' and values['-IN-'].isdecimal():
+    if event == 'Convert':
+        if re.search(REGEX, values['-IN-']):
+            if values['-CURRENCY-IN-'] == 'BGN':
+                value = float(values['-IN-'])/EURO
+            else:
+                value = float(values['-IN-'])*EURO
+                window['-OUT-'].update(round(value, 2))
         else:
-            value = float(values['-IN-'])*EURO
-        window['-OUT-'].update(round(value, 2))
+            window['-OUT-'].update('')
 
 window.close()
